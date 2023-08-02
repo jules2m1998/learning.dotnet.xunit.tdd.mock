@@ -25,18 +25,16 @@ public class SqlServerLogins : ILogins
     {
         try
         {
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                var command = connection.CreateCommand();
-                command.CommandType = CommandType.StoredProcedure;
-                command.CommandText = "CreateUser";
-                command.Parameters.AddWithValue("@Email", email);
-                command.Parameters.AddWithValue("@Password", password);
-                await connection.OpenAsync();
-                await command.ExecuteNonQueryAsync();
+            using var connection = new SqlConnection(_connectionString);
+            var command = connection.CreateCommand();
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandText = "CreateUser";
+            command.Parameters.AddWithValue("@Email", email);
+            command.Parameters.AddWithValue("@Password", password);
+            await connection.OpenAsync();
+            await command.ExecuteNonQueryAsync();
 
-                _logger.LogInformation($"A user with email address of {email} was registered.");
-            }
+            _logger.LogInformation($"A user with email address of {email} was registered.");
         }
         catch (Exception e)
         {
